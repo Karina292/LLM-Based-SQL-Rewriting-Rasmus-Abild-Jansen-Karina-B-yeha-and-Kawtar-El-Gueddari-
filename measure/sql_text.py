@@ -29,7 +29,7 @@ import re
 #   '...'      string literal ('' is an escaped quote)
 #   "..."      quoted identifier
 #   -- ...     line comment
-#   /* ... */  block comment (may span several lines, hence DOTALL)
+#   /* ... */  block comment (may span several lines, thus we need to use DOTALL)
 _IGNORED = re.compile(r"'(?:[^']|'')*'|\"[^\"]*\"|--[^\n]*|/\*.*?\*/", re.DOTALL)
 
 
