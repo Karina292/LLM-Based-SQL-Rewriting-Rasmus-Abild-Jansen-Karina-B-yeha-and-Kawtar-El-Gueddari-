@@ -1,2 +1,5 @@
 .venv/
 selftest/
+check/
+.DS_Store
+__pycache__/
