@@ -10,8 +10,10 @@ One line per rewrite, in the format read by measure/ (see measure/io_files.py):
 - generate_one(...):  call once per rewrite -> one line in generations.jsonl
 - already_generated(): keys already in the file, to resume after a crash
 
-Settings follow A2: T = 0.7, one fixed seed per generation (1 to 5),
-num_ctx = 8192, every other Ollama option left at its default.
+Settings follow A2 and are read from setup/generation_config.json:
+T = 0.7, one fixed seed per generation (1 to 5), num_ctx = 8192,
+every other Ollama option left at its default.
+The campaign itself is run by generate.py.
 """
 
 import json
@@ -19,6 +21,7 @@ import os
 import platform
 import re
 import subprocess
+import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -27,12 +30,16 @@ try:
 except ImportError:
     sqlglot = None      # parse_ok is then recorded as None
 
-RESULTS = Path(__file__).resolve().parent / "results"
+ROOT = Path(__file__).resolve().parent
+RESULTS = ROOT / "results"
 GENERATIONS_FILE = RESULTS / "generations.jsonl"
 
-TEMPERATURE = 0.7
-SEEDS = (1, 2, 3, 4, 5)                 # N = 5, one fixed seed per generation
-BASE_OPTIONS = {"temperature": TEMPERATURE, "num_ctx": 8192}
+# Frozen settings live in setup/generation_config.json (one place for the whole group)
+with open(ROOT / "setup" / "generation_config.json") as _f:
+    CONFIG = json.load(_f)
+TEMPERATURE = CONFIG["temperature"]
+SEEDS = tuple(CONFIG["seeds"])          # N = 5, one fixed seed per generation
+BASE_OPTIONS = {"temperature": TEMPERATURE, "num_ctx": CONFIG["num_ctx"]}
 
 
 def _cmd(args):
@@ -82,10 +89,11 @@ def model_ids():
     return ids
 
 
-def log_environment():
+def log_environment(extra=None):
     """Save the setup of this session, so the run can be described in the method section.
 
     One file per session (timestamped), so earlier sessions are not overwritten.
+    `extra` (dict) is added as is, e.g. the prompt hash.
     Note: ollama_env shows the OLLAMA_* variables of this Python process; if the
     Ollama server was started elsewhere (service, other shell) its settings may differ.
     """
@@ -100,6 +108,7 @@ def log_environment():
         "ollama_env": {k: v for k, v in os.environ.items() if k.startswith("OLLAMA_")},
         "options": {**BASE_OPTIONS, "seeds": list(SEEDS)},
         "sqlglot_version": getattr(sqlglot, "__version__", None),
+        **(extra or {}),
     }
     RESULTS.mkdir(parents=True, exist_ok=True)
     path = RESULTS / f"env_gen_{now.strftime('%Y-%m-%dT%H%M%S')}.json"
@@ -153,7 +162,7 @@ def parse_ok(sql):
 
 
 def _get(resp, key, default=None):
-    """Field of an Ollama response: a dict in old ollama-python, an object since 0.4."""
+    """Field of an Ollama response: a dict (HTTP API), or an object (ollama package >= 0.4)."""
     if isinstance(resp, dict):
         return resp.get(key, default)
     val = getattr(resp, key, default)
@@ -182,7 +191,7 @@ def already_generated(path=GENERATIONS_FILE):
 
 
 def log_generation(query_id, form, model, seed, response, gpu_before, gpu_after,
-                   model_id=None, path=GENERATIONS_FILE):
+                   model_id=None, path=GENERATIONS_FILE, prompt_sha=None):
     """Append one rewrite to generations.jsonl and return the row.
 
     `response` is what ollama.generate() returned. Ollama durations are in
@@ -202,6 +211,7 @@ def log_generation(query_id, form, model, seed, response, gpu_before, gpu_after,
         "seed": seed,
         "temperature": TEMPERATURE,
         "num_ctx": BASE_OPTIONS["num_ctx"],
+        "prompt_sha": prompt_sha,   # hash of the exact prompt sent (system + user)
         "sql": sql,
         "parse_ok": parse_ok(sql),
         # "stop" = finished normally, "length" = cut off (num_predict / num_ctx reached)
@@ -230,32 +240,33 @@ def log_generation(query_id, form, model, seed, response, gpu_before, gpu_after,
     return row
 
 
-def generate_one(model, form, query_id, seed, prompt, model_id=None, path=GENERATIONS_FILE):
+def ollama_generate(model, prompt, options, system=None):
+    """POST /api/generate to the local Ollama server and return the response as a dict.
+
+    Plain HTTP instead of the ollama Python package: the package (0.6.3) drops
+    fields it does not know, such as prompt_eval_cached_count, and adds a dependency.
+    """
+    host = os.environ.get("OLLAMA_HOST", "127.0.0.1:11434")
+    if not host.startswith("http"):
+        host = "http://" + host
+    body = {"model": model, "prompt": prompt, "options": options, "stream": False}
+    if system:
+        body["system"] = system
+    req = urllib.request.Request(host.rstrip("/") + "/api/generate", data=json.dumps(body).encode(),
+                                 headers={"Content-Type": "application/json"})
+    with urllib.request.urlopen(req, timeout=900) as r:
+        return json.loads(r.read())
+
+
+def generate_one(model, form, query_id, seed, prompt, model_id=None, path=GENERATIONS_FILE,
+                 system=None, prompt_sha=None):
     """Call the model once with the A2 settings and log the result.
 
     The seed goes into the options of this call, so each of the N generations
-    is reproducible on its own.
+    is reproducible on its own. `system` is the fixed instruction (A2, 3.3).
     """
-    import ollama   # imported here so the logging helpers work without ollama installed
     before = gpu_snapshot()
-    resp = ollama.generate(model=model, prompt=prompt, options={**BASE_OPTIONS, "seed": seed})
+    resp = ollama_generate(model, prompt, {**BASE_OPTIONS, "seed": seed}, system)
     after = gpu_snapshot()
-    return log_generation(query_id, form, model, seed, resp, before, after, model_id, path)
-
-
-# --- Example use ---------------------------------------------------------
-# import random
-# from run_logger import (SEEDS, already_generated, generate_one, generation_key,
-#                         log_environment, model_ids)
-#
-# log_environment()
-# ids = model_ids()
-# done = already_generated()
-#
-# jobs = [(m, f, q, s) for m in MODELS for f in FORMS for q in QUERIES for s in SEEDS
-#         if generation_key(q, f, m, s) not in done]           # resume: skip what exists
-# random.shuffle(jobs)  # mixed order spreads thermal drift across all conditions
-#
-# for model, form, query_id, seed in jobs:
-#     row = generate_one(model, form, query_id, seed, build_prompt(form, query_id), ids.get(model))
-#     print(query_id, form, model, seed, row["done_reason"], row["parse_ok"])
+    return log_generation(query_id, form, model, seed, resp, before, after, model_id, path,
+                          prompt_sha)
