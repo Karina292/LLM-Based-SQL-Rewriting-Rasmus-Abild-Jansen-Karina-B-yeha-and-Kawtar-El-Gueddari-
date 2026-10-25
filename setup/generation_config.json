@@ -1,0 +1,16 @@
+{
+  "temperature": 0.7,
+  "seeds": [1, 2, 3, 4, 5],
+  "num_ctx": 8192,
+  "ollama_version": "0.40.9",
+  "models": {
+    "qwen2.5-coder:7b-instruct-q4_K_M": "dae161e27b0e",
+    "llama3.1:8b-instruct-q4_K_M": "46e0c10c039e"
+  },
+  "forms": ["nested", "join", "cte"],
+  "shuffle_seed": 2204,
+  "prompt_system": "setup/prompt_system.txt",
+  "prompt_user": "setup/prompt_user.txt",
+  "schema": "queries/schema_anon.sql",
+  "queries_dir": "queries"
+}
