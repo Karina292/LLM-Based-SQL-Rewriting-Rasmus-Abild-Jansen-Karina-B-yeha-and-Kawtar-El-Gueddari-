@@ -21,11 +21,12 @@ can measure it.
 Before a run:
   - the Ollama version and model IDs are checked against the config, so the
     weights cannot change during the campaign without us noticing;
-  - each model gets one untimed warm-up call, so the first logged call does
-    not include loading the model from disk.
-Jobs are run model by model (switching models on an 8 GB GPU means reloading
-them), in shuffled order within each model, so thermal drift is spread over
-queries, forms and seeds. The shuffle uses a fixed seed: the order is repeatable.
+  - each model gets one untimed warm-up call, so its file is read from disk
+    once before logging starts (later reloads come from the OS file cache).
+Every call reloads the model (keep_alive = 0, see run_logger.ollama_generate),
+so no call reuses the cached prompt of the previous one and each seed is
+reproducible. Jobs are run model by model, in shuffled order within each
+model, so thermal drift is spread over queries, forms and seeds. The shuffle uses a fixed seed: the order is repeatable.
 """
 
 import argparse
