@@ -12,7 +12,8 @@ One line per rewrite, in the format read by measure/ (see measure/io_files.py):
 
 Settings follow A2 and are read from setup/generation_config.json:
 T = 0.7, one fixed seed per generation (1 to 5), num_ctx = 8192,
-every other Ollama option left at its default.
+keep_alive = 0 (model reloaded for every call, so a seed always gives
+the same rewrite), every other Ollama option left at its default.
 The campaign itself is run by generate.py.
 """
 
@@ -245,11 +246,17 @@ def ollama_generate(model, prompt, options, system=None):
 
     Plain HTTP instead of the ollama Python package: the package (0.6.3) drops
     fields it does not know, such as prompt_eval_cached_count, and adds a dependency.
+
+    keep_alive = 0 (config) unloads the model after each call. Otherwise Ollama
+    reuses the cached prompt of the previous call, which changes the numerics
+    slightly, so the same seed could give a different rewrite (tested on q03/q05).
+    The reload time is logged in load_ms and is not part of gen_time_ms.
     """
     host = os.environ.get("OLLAMA_HOST", "127.0.0.1:11434")
     if not host.startswith("http"):
         host = "http://" + host
-    body = {"model": model, "prompt": prompt, "options": options, "stream": False}
+    body = {"model": model, "prompt": prompt, "options": options, "stream": False,
+            "keep_alive": CONFIG["keep_alive"]}
     if system:
         body["system"] = system
     req = urllib.request.Request(host.rstrip("/") + "/api/generate", data=json.dumps(body).encode(),
