@@ -90,11 +90,12 @@ def model_ids():
     return ids
 
 
-def log_environment(extra=None):
+def log_environment(extra=None, directory=None):
     """Save the setup of this session, so the run can be described in the method section.
 
     One file per session (timestamped), so earlier sessions are not overwritten.
-    `extra` (dict) is added as is, e.g. the prompt hash.
+    `extra` (dict) is added as is, e.g. the prompt hash. `directory` (default results/)
+    lets the pilots keep their environment files apart from the campaign's.
     Note: ollama_env shows the OLLAMA_* variables of this Python process; if the
     Ollama server was started elsewhere (service, other shell) its settings may differ.
     """
@@ -111,8 +112,9 @@ def log_environment(extra=None):
         "sqlglot_version": getattr(sqlglot, "__version__", None),
         **(extra or {}),
     }
-    RESULTS.mkdir(parents=True, exist_ok=True)
-    path = RESULTS / f"env_gen_{now.strftime('%Y-%m-%dT%H%M%S')}.json"
+    directory = Path(directory) if directory else RESULTS
+    directory.mkdir(parents=True, exist_ok=True)
+    path = directory / f"env_gen_{now.strftime('%Y-%m-%dT%H%M%S')}.json"
     with open(path, "w") as f:
         json.dump(env, f, indent=2)
     return path
@@ -192,7 +194,7 @@ def already_generated(path=GENERATIONS_FILE):
 
 
 def log_generation(query_id, form, model, seed, response, gpu_before, gpu_after,
-                   model_id=None, path=GENERATIONS_FILE, prompt_sha=None):
+                   model_id=None, path=GENERATIONS_FILE, prompt_sha=None, temperature=None):
     """Append one rewrite to generations.jsonl and return the row.
 
     `response` is what ollama.generate() returned. Ollama durations are in
@@ -210,7 +212,7 @@ def log_generation(query_id, form, model, seed, response, gpu_before, gpu_after,
         "model": model,
         "model_id": model_id,
         "seed": seed,
-        "temperature": TEMPERATURE,
+        "temperature": TEMPERATURE if temperature is None else temperature,   # pilot overrides T
         "num_ctx": BASE_OPTIONS["num_ctx"],
         "prompt_sha": prompt_sha,   # hash of the exact prompt sent (system + user)
         "sql": sql,
@@ -266,14 +268,17 @@ def ollama_generate(model, prompt, options, system=None):
 
 
 def generate_one(model, form, query_id, seed, prompt, model_id=None, path=GENERATIONS_FILE,
-                 system=None, prompt_sha=None):
+                 system=None, prompt_sha=None, temperature=None):
     """Call the model once with the A2 settings and log the result.
 
     The seed goes into the options of this call, so each of the N generations
     is reproducible on its own. `system` is the fixed instruction (A2, 3.3).
     """
     before = gpu_snapshot()
-    resp = ollama_generate(model, prompt, {**BASE_OPTIONS, "seed": seed}, system)
+    options = {**BASE_OPTIONS, "seed": seed}
+    if temperature is not None:             # temperature pilot only; the campaign uses the config's T
+        options["temperature"] = temperature
+    resp = ollama_generate(model, prompt, options, system)
     after = gpu_snapshot()
     return log_generation(query_id, form, model, seed, resp, before, after, model_id, path,
-                          prompt_sha)
+                          prompt_sha, temperature)
