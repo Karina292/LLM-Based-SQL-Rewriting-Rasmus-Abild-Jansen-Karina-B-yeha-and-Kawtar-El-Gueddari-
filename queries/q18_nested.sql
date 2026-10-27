@@ -17,7 +17,7 @@ FROM (
       GROUP BY
         col_l_order_id
       HAVING
-        SUM(col_l_qty) > 313
+        SUM(col_l_qty) > 300
     )
     AND col_c_id = col_o_customer_id
     AND col_o_id = col_l_order_id
