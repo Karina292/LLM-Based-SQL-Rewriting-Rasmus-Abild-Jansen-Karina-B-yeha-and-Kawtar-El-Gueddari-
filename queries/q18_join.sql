@@ -19,7 +19,7 @@ WHERE
     GROUP BY
       col_l_order_id
     HAVING
-      SUM(col_l_qty) > 313
+      SUM(col_l_qty) > 300
   )
 GROUP BY
   col_c_name,
