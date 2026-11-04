@@ -1,0 +1,27 @@
+{
+  "timestamp": "2026-11-04T10:40:45.205995+00:00",
+  "kernel": "11",
+  "cpu_count": 22,
+  "ollama_version": "ollama version is 0.40.13",
+  "model_ids": {
+    "qwen3:8b": "500a1f067a9f",
+    "llama3.1:8b-instruct-q4_K_M": "46e0c10c039e",
+    "qwen2.5-coder:7b-instruct-q4_K_M": "dae161e27b0e"
+  },
+  "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, 616.92",
+  "ollama_env": {},
+  "options": {
+    "temperature": 0.7,
+    "num_ctx": 8192,
+    "seeds": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ]
+  },
+  "sqlglot_version": "30.22.0",
+  "pilot": "memorization",
+  "prompt": "Here is a database schema:\n\n```sql\n{schema}\n```\n\nWhich public database benchmark or well-known sample database does this schema come from?\nAnswer on the first line with only its name, or NONE if you do not recognize it.\nThen explain your answer in one sentence."
+}
