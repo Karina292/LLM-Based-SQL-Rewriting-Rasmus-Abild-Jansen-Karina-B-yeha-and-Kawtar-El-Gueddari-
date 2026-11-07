@@ -1,3 +1,3 @@
-model,n_gen,t_gen_med_s,t_gen_q1_s,t_gen_q3_s,tokens_med,n_fast_tpch_sf01_anon,k_med_tpch_sf01_anon,k_min_tpch_sf01_anon,n_fast_tpch_sf01_idx,k_med_tpch_sf01_idx,k_min_tpch_sf01_idx
-llama3.1,225,6.559,5.198,8.196,235.000,11,808.282,107.678,11,1331.192,112.039
-qwen2.5-coder,225,5.584,4.608,7.452,211.000,10,1131.504,0.316,13,1888.795,929.037
+model,n_gen,t_gen_med_s,t_gen_q1_s,t_gen_q3_s,tokens_med,n_fast_tpch_sf01_anon,k_med_tpch_sf01_anon,k_min_tpch_sf01_anon,n_fast_tpch_sf01_idx,k_med_tpch_sf01_idx,k_min_tpch_sf01_idx,n_fast_tpch_sf1_anon,k_med_tpch_sf1_anon,k_min_tpch_sf1_anon
+llama3.1,225,6.559,5.198,8.196,235.000,11,808.282,107.678,11,1331.192,112.039,9,88.147,35.057
+qwen2.5-coder,225,5.584,4.608,7.452,211.000,10,1131.504,0.316,13,1888.795,929.037,9,36.432,32.084

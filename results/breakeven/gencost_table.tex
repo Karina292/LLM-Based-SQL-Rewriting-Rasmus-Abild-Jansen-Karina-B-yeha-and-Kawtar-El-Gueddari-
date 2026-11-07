@@ -2,14 +2,14 @@
 \centering
 \footnotesize
 \begin{adjustbox}{max width=\columnwidth}
-\begin{tabular}{l r r r r r r r r}
+\begin{tabular}{l r r r r r r r r r r r}
 \toprule
- & & & \multicolumn{3}{c}{no idx} & \multicolumn{3}{c}{FK idx} \\
-\cmidrule(lr){4-6}\cmidrule(lr){7-9}
-Model & $T_\text{gen}$ (s) & Tokens & $n$ & min $k^*$ & med.\ $k^*$ & $n$ & min $k^*$ & med.\ $k^*$ \\
+ & & & \multicolumn{3}{c}{no idx} & \multicolumn{3}{c}{FK idx} & \multicolumn{3}{c}{no idx} \\
+\cmidrule(lr){4-6}\cmidrule(lr){7-9}\cmidrule(lr){10-12}
+Model & $T_\text{gen}$ (s) & Tokens & $n$ & min $k^*$ & med.\ $k^*$ & $n$ & min $k^*$ & med.\ $k^*$ & $n$ & min $k^*$ & med.\ $k^*$ \\
 \midrule
-Llama 3.1 8B & 6.6 [5.2, 8.2] & 235 & 11 & 108 & 808 & 11 & 112 & 1{,}331 \\
-Qwen2.5-Coder 7B & 5.6 [4.6, 7.5] & 211 & 10 & 0.3 & 1{,}132 & 13 & 929 & 1{,}889 \\
+Llama 3.1 8B & 6.6 [5.2, 8.2] & 235 & 11 & 108 & 808 & 11 & 112 & 1{,}331 & 9 & 35 & 88 \\
+Qwen2.5-Coder 7B & 5.6 [4.6, 7.5] & 211 & 10 & 0.3 & 1{,}132 & 13 & 929 & 1{,}889 & 9 & 32 & 36 \\
 \bottomrule
 \end{tabular}
 \end{adjustbox}
