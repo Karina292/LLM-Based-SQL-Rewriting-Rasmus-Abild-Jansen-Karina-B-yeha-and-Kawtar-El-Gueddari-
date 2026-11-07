@@ -117,7 +117,7 @@ def cmd_baseline(args):
     print(f"\nBaselines in {out / 'baselines.csv'} ({len(base)} rows for {args.db})")
 
 
-def measure_one(conn, args, gen, queries, base, ref_cache, out):
+def measure_one(conn, args, gen, queries, base, ref_cache, out, timer=None):
     """Evaluate one LLM rewrite and return its row for measurements.csv.
 
     Steps (stop at the first failure, which is recorded in failure_type):
@@ -172,7 +172,7 @@ def measure_one(conn, args, gen, queries, base, ref_cache, out):
 
     # 3. Timing
     try:
-        times, doc = time_query(conn, sql, args.warmup, args.reps)
+        times, doc = (timer or time_query)(conn, sql, args.warmup, args.reps)
     except Exception as e:
         row["failure_type"] = "timing_" + classify_error(e)   # correct but could not be timed
         row["error"] = str(e).splitlines()[0][:200]
