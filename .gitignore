@@ -4,3 +4,4 @@ check/
 .DS_Store
 __pycache__/
 pilot_data/
+db_config.py
