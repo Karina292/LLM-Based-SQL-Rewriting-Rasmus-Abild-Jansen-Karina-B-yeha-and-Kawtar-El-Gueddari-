@@ -1,0 +1,26 @@
+% Baseline Runtimes for tpch_sf1_anon
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lccc}
+\toprule
+\textbf{Query} & \textbf{Explicit JOIN} & \textbf{Modular CTE} & \textbf{Nested Subqueries} \\
+\midrule
+Q02 & 154.02 & 153.55 & 151.56 \\
+Q03 & 171.51 & 172.00 & 171.27 \\
+Q04 & 84.99 & 84.73 & 176.63 \\
+Q05 & 106.31 & 107.06 & 106.67 \\
+Q07 & 164.24 & 161.64 & 163.43 \\
+Q08 & 153.14 & 153.71 & 147.08 \\
+Q09 & 641.62 & 655.45 & 655.81 \\
+Q10 & 312.90 & 313.01 & 313.33 \\
+Q11 & 64.85 & 64.97 & 64.77 \\
+Q12 & 285.73 & 285.75 & 285.69 \\
+Q13 & 322.58 & 321.12 & 322.57 \\
+Q18 & 1200.21 & 1205.29 & 1221.70 \\
+Q21 & 292.05 & 291.90 & 291.86 \\
+\bottomrule
+\end{tabular}
+\caption{Baseline execution runtimes (median ms) across structural forms on tpch_sf1_anon.}
+\label{tab:baseline_tpch_sf1_anon}
+\end{table}
