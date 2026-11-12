@@ -1,4 +1,4 @@
-/* using 1433771997 as a seed to the RNG */
+/* using 1792286819 as a seed to the RNG */
 SELECT
   supp_nation,
   cust_nation,
@@ -26,10 +26,10 @@ FROM (
   WHERE
     (
       (
-        n1.col_n_name = 'ROMANIA' AND n2.col_n_name = 'INDIA'
+        n1.col_n_name = 'UNITED KINGDOM' AND n2.col_n_name = 'INDONESIA'
       )
       OR (
-        n1.col_n_name = 'INDIA' AND n2.col_n_name = 'ROMANIA'
+        n1.col_n_name = 'INDONESIA' AND n2.col_n_name = 'UNITED KINGDOM'
       )
     )
     AND col_l_ship_date BETWEEN CAST('1995-01-01' AS DATE) AND CAST('1996-12-31' AS DATE)

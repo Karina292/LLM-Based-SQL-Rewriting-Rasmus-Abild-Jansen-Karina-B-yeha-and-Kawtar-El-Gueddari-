@@ -1,4 +1,4 @@
-/* using 1433771997 as a seed to the RNG */
+/* using 1792286819 as a seed to the RNG */
 SELECT
   col_s_balance,
   col_s_name,
@@ -20,9 +20,9 @@ INNER JOIN tbl_zones
 WHERE
   (
     (
-      col_p_dimension = 38 AND col_p_category LIKE '%TIN'
+      col_p_dimension = 17 AND col_p_category LIKE '%NICKEL'
     )
-    AND col_r_name = 'ZONE_CENTRAL'
+    AND col_r_name = 'AMERICA'
   )
   AND col_ps_cost = (
     SELECT
@@ -35,7 +35,7 @@ WHERE
     INNER JOIN tbl_zones
       ON col_n_zone_id = col_r_id
     WHERE
-      col_p_id = col_ps_part_id AND col_r_name = 'ZONE_CENTRAL'
+      col_p_id = col_ps_part_id AND col_r_name = 'AMERICA'
   )
 ORDER BY
   col_s_balance DESC,

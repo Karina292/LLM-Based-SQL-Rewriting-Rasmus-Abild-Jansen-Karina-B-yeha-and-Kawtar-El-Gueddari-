@@ -1,4 +1,4 @@
-/* using 1433771997 as a seed to the RNG */
+/* using 1792286819 as a seed to the RNG */
 SELECT
   col_l_mode,
   SUM(
@@ -18,13 +18,13 @@ WHERE
   (
     (
       (
-        col_l_mode IN ('FOB', 'SHIP') AND col_l_commit_date < col_l_receipt_date
+        col_l_mode IN ('SHIP', 'REG AIR') AND col_l_commit_date < col_l_receipt_date
       )
       AND col_l_ship_date < col_l_commit_date
     )
-    AND col_l_receipt_date >= CAST('1994-01-01' AS DATE)
+    AND col_l_receipt_date >= CAST('1997-01-01' AS DATE)
   )
-  AND col_l_receipt_date < CAST('1994-01-01' AS DATE) + INTERVAL '1 YEAR'
+  AND col_l_receipt_date < CAST('1997-01-01' AS DATE) + INTERVAL '1 YEAR'
 GROUP BY
   col_l_mode
 ORDER BY

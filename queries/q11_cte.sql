@@ -3,9 +3,9 @@ WITH filtered_tbl_countries AS (
     *
   FROM tbl_countries
   WHERE
-    col_n_name = 'ARGENTINA'
+    col_n_name = 'ETHIOPIA'
 )
-/* using 1433771997 as a seed to the RNG */
+/* using 1792286819 as a seed to the RNG */
 SELECT
   col_ps_part_id,
   SUM(col_ps_cost * col_ps_available_qty) AS value
@@ -22,7 +22,7 @@ HAVING
     WHERE
       col_ps_supplier_id = col_s_id
       AND col_s_country_id = col_n_id
-      AND col_n_name = 'ARGENTINA'
+      AND col_n_name = 'ETHIOPIA'
   )
 ORDER BY
   value DESC;

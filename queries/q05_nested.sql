@@ -1,4 +1,4 @@
-/* using 1433771997 as a seed to the RNG */
+/* using 1792286819 as a seed to the RNG */
 SELECT
   col_n_name,
   SUM(col_l_ext_price * (
@@ -9,14 +9,14 @@ FROM tbl_customers, (
     *
   FROM tbl_orders
   WHERE
-    col_o_date >= CAST('1994-01-01' AS DATE)
-    AND col_o_date < CAST('1994-01-01' AS DATE) + INTERVAL '1 YEAR'
+    col_o_date >= CAST('1995-01-01' AS DATE)
+    AND col_o_date < CAST('1995-01-01' AS DATE) + INTERVAL '1 YEAR'
 ) AS tbl_orders, tbl_items, tbl_suppliers, tbl_countries, (
   SELECT
     *
   FROM tbl_zones
   WHERE
-    col_r_name = 'ZONE_CENTRAL'
+    col_r_name = 'ZONE_EAST'
 ) AS tbl_zones
 WHERE
   (

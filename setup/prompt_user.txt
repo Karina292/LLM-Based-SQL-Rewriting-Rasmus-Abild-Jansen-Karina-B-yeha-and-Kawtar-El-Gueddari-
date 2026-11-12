@@ -1,9 +1,0 @@
-Schema:
-```sql
-{schema}
-```
-
-Query:
-```sql
-{query}
-```

@@ -1,4 +1,4 @@
-/* using 1433771997 as a seed to the RNG */
+/* using 1792286819 as a seed to the RNG */
 SELECT
   country,
   o_year,
@@ -22,7 +22,7 @@ FROM (
   INNER JOIN tbl_countries
     ON col_s_country_id = col_n_id
   WHERE
-    col_p_name LIKE '%yellow%'
+    col_p_name LIKE '%cream%'
 ) AS profit
 GROUP BY
   country,

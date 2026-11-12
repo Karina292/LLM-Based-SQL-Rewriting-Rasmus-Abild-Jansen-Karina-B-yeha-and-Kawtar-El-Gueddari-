@@ -1,4 +1,4 @@
-/* using 1433771997 as a seed to the RNG */
+/* using 1792286819 as a seed to the RNG */
 SELECT
   col_l_order_id,
   SUM(col_l_ext_price * (
@@ -13,9 +13,9 @@ INNER JOIN tbl_items
   ON col_l_order_id = col_o_id
 WHERE
   (
-    col_c_segment = 'SEGMENT_A' AND col_o_date < CAST('1995-03-29' AS DATE)
+    col_c_segment = 'SEGMENT_C' AND col_o_date < CAST('1995-03-07' AS DATE)
   )
-  AND col_l_ship_date > CAST('1995-03-29' AS DATE)
+  AND col_l_ship_date > CAST('1995-03-07' AS DATE)
 GROUP BY
   col_l_order_id,
   col_o_date,

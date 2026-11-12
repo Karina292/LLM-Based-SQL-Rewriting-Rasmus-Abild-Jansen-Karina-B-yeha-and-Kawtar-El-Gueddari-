@@ -1,7 +1,7 @@
-/* using 1433771997 as a seed to the RNG */
+/* using 1792286819 as a seed to the RNG */
 SELECT
   o_year,
-  SUM(CASE WHEN country = 'INDIA' THEN volume ELSE 0 END) / SUM(volume) AS mkt_share
+  SUM(CASE WHEN country = 'INDONESIA' THEN volume ELSE 0 END) / SUM(volume) AS mkt_share
 FROM (
   SELECT
     EXTRACT(YEAR FROM col_o_date) AS o_year,
@@ -29,7 +29,7 @@ FROM (
       col_r_name = 'ZONE_EAST'
       AND col_o_date BETWEEN CAST('1995-01-01' AS DATE) AND CAST('1996-12-31' AS DATE)
     )
-    AND col_p_category = 'PROMO BRUSHED COPPER'
+    AND col_p_category = 'SMALL BURNISHED NICKEL'
 ) AS all_nations
 GROUP BY
   o_year

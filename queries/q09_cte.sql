@@ -13,9 +13,9 @@ WITH profit AS (
     AND col_p_id = col_l_part_id
     AND col_o_id = col_l_order_id
     AND col_s_country_id = col_n_id
-    AND col_p_name LIKE '%yellow%'
+    AND col_p_name LIKE '%cream%'
 )
-/* using 1433771997 as a seed to the RNG */
+/* using 1792286819 as a seed to the RNG */
 SELECT
   country,
   o_year,

@@ -1,4 +1,4 @@
-/* using 1433771997 as a seed to the RNG */
+/* using 1792286819 as a seed to the RNG */
 SELECT
   col_n_name,
   SUM(col_l_ext_price * (
@@ -17,9 +17,9 @@ INNER JOIN tbl_zones
   ON col_n_zone_id = col_r_id
 WHERE
   (
-    col_r_name = 'ZONE_CENTRAL' AND col_o_date >= CAST('1994-01-01' AS DATE)
+    col_r_name = 'ZONE_EAST' AND col_o_date >= CAST('1995-01-01' AS DATE)
   )
-  AND col_o_date < CAST('1994-01-01' AS DATE) + INTERVAL '1 YEAR'
+  AND col_o_date < CAST('1995-01-01' AS DATE) + INTERVAL '1 YEAR'
 GROUP BY
   col_n_name
 ORDER BY

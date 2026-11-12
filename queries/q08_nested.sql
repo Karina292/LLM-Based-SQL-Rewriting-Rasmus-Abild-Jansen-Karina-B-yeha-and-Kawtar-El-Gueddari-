@@ -1,7 +1,7 @@
-/* using 1433771997 as a seed to the RNG */
+/* using 1792286819 as a seed to the RNG */
 SELECT
   o_year,
-  SUM(CASE WHEN country = 'INDIA' THEN volume ELSE 0 END) / SUM(volume) AS mkt_share
+  SUM(CASE WHEN country = 'INDONESIA' THEN volume ELSE 0 END) / SUM(volume) AS mkt_share
 FROM (
   SELECT
     EXTRACT(YEAR FROM col_o_date) AS o_year,
@@ -14,7 +14,7 @@ FROM (
       *
     FROM tbl_parts
     WHERE
-      col_p_category = 'PROMO BRUSHED COPPER'
+      col_p_category = 'SMALL BURNISHED NICKEL'
   ) AS tbl_parts, tbl_suppliers, tbl_items, (
     SELECT
       *

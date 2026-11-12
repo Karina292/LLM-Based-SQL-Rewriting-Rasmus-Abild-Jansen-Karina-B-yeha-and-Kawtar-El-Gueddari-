@@ -1,4 +1,4 @@
-/* using 1433771997 as a seed to the RNG */
+/* using 1792286819 as a seed to the RNG */
 SELECT
   col_l_order_id,
   SUM(col_l_ext_price * (
@@ -11,19 +11,19 @@ FROM (
     *
   FROM tbl_customers
   WHERE
-    col_c_segment = 'SEGMENT_A'
+    col_c_segment = 'SEGMENT_C'
 ) AS tbl_customers, (
   SELECT
     *
   FROM tbl_orders
   WHERE
-    col_o_date < CAST('1995-03-29' AS DATE)
+    col_o_date < CAST('1995-03-07' AS DATE)
 ) AS tbl_orders, (
   SELECT
     *
   FROM tbl_items
   WHERE
-    col_l_ship_date > CAST('1995-03-29' AS DATE)
+    col_l_ship_date > CAST('1995-03-07' AS DATE)
 ) AS tbl_items
 WHERE
   col_c_id = col_o_customer_id AND col_l_order_id = col_o_id

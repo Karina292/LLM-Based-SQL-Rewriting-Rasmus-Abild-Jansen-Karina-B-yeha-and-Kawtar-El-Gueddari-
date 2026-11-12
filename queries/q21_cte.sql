@@ -15,9 +15,9 @@ WITH filtered_l1 AS (
     *
   FROM tbl_countries
   WHERE
-    col_n_name = 'GERMANY'
+    col_n_name = 'ALGERIA'
 )
-/* using 1433771997 as a seed to the RNG */
+/* using 1792286819 as a seed to the RNG */
 SELECT
   col_s_name,
   COUNT(*) AS numwait

@@ -3,10 +3,10 @@ WITH filtered_tbl_orders AS (
     *
   FROM tbl_orders
   WHERE
-    col_o_date >= CAST('1997-07-01' AS DATE)
-    AND col_o_date < CAST('1997-07-01' AS DATE) + INTERVAL '3 MONTH'
+    col_o_date >= CAST('1994-01-01' AS DATE)
+    AND col_o_date < CAST('1994-01-01' AS DATE) + INTERVAL '3 MONTH'
 )
-/* using 1433771997 as a seed to the RNG */
+/* using 1792286819 as a seed to the RNG */
 SELECT
   col_o_priority,
   COUNT(*) AS order_count

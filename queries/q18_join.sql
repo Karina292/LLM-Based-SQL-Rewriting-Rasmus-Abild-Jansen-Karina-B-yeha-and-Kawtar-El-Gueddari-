@@ -1,4 +1,4 @@
-/* using 1433771997 as a seed to the RNG */
+/* using 1792286819 as a seed to the RNG */
 SELECT
   col_c_name,
   col_c_id,
@@ -19,7 +19,7 @@ WHERE
     GROUP BY
       col_l_order_id
     HAVING
-      SUM(col_l_qty) > 300
+      SUM(col_l_qty) > 312
   )
 GROUP BY
   col_c_name,

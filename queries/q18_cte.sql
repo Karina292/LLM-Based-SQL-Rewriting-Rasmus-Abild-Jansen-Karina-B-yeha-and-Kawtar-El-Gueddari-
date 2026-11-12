@@ -1,5 +1,5 @@
 WITH query_result AS (
-  /* using 1433771997 as a seed to the RNG */
+  /* using 1792286819 as a seed to the RNG */
   SELECT
     col_c_name,
     col_c_id,
@@ -16,7 +16,7 @@ WITH query_result AS (
       GROUP BY
         col_l_order_id
       HAVING
-        SUM(col_l_qty) > 300
+        SUM(col_l_qty) > 312
     )
     AND col_c_id = col_o_customer_id
     AND col_o_id = col_l_order_id

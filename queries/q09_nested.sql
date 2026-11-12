@@ -1,4 +1,4 @@
-/* using 1433771997 as a seed to the RNG */
+/* using 1792286819 as a seed to the RNG */
 SELECT
   country,
   o_year,
@@ -15,7 +15,7 @@ FROM (
       *
     FROM tbl_parts
     WHERE
-      col_p_name LIKE '%yellow%'
+      col_p_name LIKE '%cream%'
   ) AS tbl_parts, tbl_suppliers, tbl_items, tbl_part_suppliers, tbl_orders, tbl_countries
   WHERE
     (

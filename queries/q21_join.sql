@@ -1,4 +1,4 @@
-/* using 1433771997 as a seed to the RNG */
+/* using 1792286819 as a seed to the RNG */
 SELECT
   col_s_name,
   COUNT(*) AS numwait
@@ -34,7 +34,7 @@ WHERE
         AND l3.col_l_receipt_date > l3.col_l_commit_date
     )
   )
-  AND col_n_name = 'GERMANY'
+  AND col_n_name = 'ALGERIA'
 GROUP BY
   col_s_name
 ORDER BY

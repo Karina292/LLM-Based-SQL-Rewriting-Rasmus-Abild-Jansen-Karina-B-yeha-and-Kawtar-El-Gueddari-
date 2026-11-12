@@ -1,4 +1,4 @@
-/* using 1433771997 as a seed to the RNG */
+/* using 1792286819 as a seed to the RNG */
 SELECT
   col_ps_part_id,
   SUM(col_ps_cost * col_ps_available_qty) AS value
@@ -7,7 +7,7 @@ FROM tbl_part_suppliers, tbl_suppliers, (
     *
   FROM tbl_countries
   WHERE
-    col_n_name = 'ARGENTINA'
+    col_n_name = 'ETHIOPIA'
 ) AS tbl_countries
 WHERE
   col_ps_supplier_id = col_s_id AND col_s_country_id = col_n_id
@@ -22,7 +22,7 @@ HAVING
         *
       FROM tbl_countries
       WHERE
-        col_n_name = 'ARGENTINA'
+        col_n_name = 'ETHIOPIA'
     ) AS tbl_countries
     WHERE
       col_ps_supplier_id = col_s_id AND col_s_country_id = col_n_id
