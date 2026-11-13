@@ -1,0 +1,18 @@
+\begin{table}[t]
+\centering
+\footnotesize
+\begin{adjustbox}{max width=\columnwidth}
+\begin{tabular}{l r r r r r r r r r r r}
+\toprule
+ & & & \multicolumn{3}{c}{no idx} & \multicolumn{3}{c}{FK idx} & \multicolumn{3}{c}{no idx} \\
+\cmidrule(lr){4-6}\cmidrule(lr){7-9}\cmidrule(lr){10-12}
+Model & $T_\text{gen}$ (s) & Tokens & $n$ & min $k^*$ & med.\ $k^*$ & $n$ & min $k^*$ & med.\ $k^*$ & $n$ & min $k^*$ & med.\ $k^*$ \\
+\midrule
+Llama 3.1 8B & 6.6 [5.2, 8.2] & 235 & 8 & 120 & 917 & 8 & 102 & 1{,}022 & 9 & 35 & 88 \\
+Qwen2.5-Coder 7B & 5.6 [4.6, 7.5] & 211 & 7 & 0.3 & 1{,}308 & 10 & 867 & 1{,}396 & 9 & 32 & 36 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\caption{Generation cost and break-even point $k^* = T_\text{gen}/(T_\text{base}-T_\text{rewrite})$. $T_\text{gen}$ is prompt evaluation plus decoding (model load excluded), median and IQR over all 225 generations per model. $k^*$ is computed only for correct rewrites with speedup $>1.05$; $n$ is the number of such rewrites (out of 225 per model and database). Computed with \texttt{breakeven.py} in our repository.}
+\label{tab:gencost}
+\end{table}

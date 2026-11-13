@@ -1,0 +1,5 @@
+model,schema,n,tpch,other_tpc,ssb,other_named,other,none
+llama3.1:8b-instruct-q4_K_M,anon,5,1,0,0,1,0,3
+llama3.1:8b-instruct-q4_K_M,tpch,5,3,1,0,0,1,0
+qwen2.5-coder:7b-instruct-q4_K_M,anon,5,0,0,0,0,1,4
+qwen2.5-coder:7b-instruct-q4_K_M,tpch,5,4,0,0,0,1,0
