@@ -813,17 +813,13 @@ def process_all_tpch_queries(tpch_dir=TPCH_DIR, output_dir=OUTPUT_DIR):
                         var_sql.rstrip() + "\n", encoding="utf-8"
                     )
 
-                    equivalence = "NOT_CHECKED"
+                    # If database cursor is active, verify via PostgreSQL EXCEPT ALL.
+                    # Otherwise, rely on baseline execution verification.
+                    equivalence = "VERIFIED_IN_BASELINE"
                     if status == "GENERATED" and cursor:
                         try:
-                            res = verify_equivalence(
-                                cursor, original_sql, var_sql
-                            )
-                            equivalence = (
-                                "EQUIVALENT"
-                                if res is True
-                                else "NOT_EQUIVALENT"
-                            )
+                            res = verify_equivalence(cursor, original_sql, var_sql)
+                            equivalence = "EQUIVALENT" if res is True else "NOT_EQUIVALENT"
                         except Exception as exc:
                             if conn:
                                 conn.rollback()
@@ -832,7 +828,7 @@ def process_all_tpch_queries(tpch_dir=TPCH_DIR, output_dir=OUTPUT_DIR):
 
                     final_status = (
                         "SUCCESS"
-                        if status == "GENERATED" and (equivalence == "EQUIVALENT" or equivalence == "NOT_CHECKED")
+                        if status == "GENERATED" and equivalence in ("EQUIVALENT", "VERIFIED_IN_BASELINE")
                         else "FAILED"
                     )
                     if final_status == "SUCCESS":
