@@ -1,5 +1,5 @@
 """TPC-H Query and Schema Anonymization Module.
-Author: Karina
+Author: Karina B'yeha
 """
 import re
 from pathlib import Path
@@ -332,7 +332,6 @@ def generate_all_anonymized_files(
     }
 
     count = 0
-    # Cerca tutte le sottocartelle q02, q03, ... dentro tpch_variants
     for q_folder in sorted(in_dir.glob("q*")):
         if not q_folder.is_dir():
             continue

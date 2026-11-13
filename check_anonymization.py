@@ -36,7 +36,6 @@ OLD_TABLES = [
 
 def verify_anonymized_variant(query_id: str, struct: str) -> tuple:
     """Verify that the anonymized file exists, parses in PostgreSQL,
-
     and has zero TPC-H table leakage.
     """
     file_name = f"{query_id}_{struct}.sql"
