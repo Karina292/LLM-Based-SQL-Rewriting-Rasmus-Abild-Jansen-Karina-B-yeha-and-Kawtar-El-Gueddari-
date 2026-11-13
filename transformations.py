@@ -716,21 +716,25 @@ def generate_variants(sql, query_id="query"):
         "subquery": transform_to_subquery(orig),
     }
 
-
 def find_query_files(tpch_dir):
     """Retrieve mapping of {query_number: file_path}."""
     tpch_dir = Path(tpch_dir)
-    if not tpch_dir.exists():
-        return {}
     query_files = {}
-    for p in sorted(tpch_dir.glob("*.sql")):
-        m = re.search(r"(\d+)", p.stem)
-        if m:
-            num = int(m.group(1))
-            if num in SELECTED_QUERIES and num not in query_files:
-                query_files[num] = p
-    return query_files
+    if not tpch_dir.exists():
+        return query_files
 
+    for num in SELECTED_QUERIES:
+        candidates = [
+            tpch_dir / f"q{num:02d}.sql",
+            tpch_dir / f"q{num}.sql",
+            tpch_dir / f"{num}.sql"
+        ]
+        for c in candidates:
+            if c.exists() and c.stat().st_size > 0:
+                query_files[num] = c
+                break
+
+    return query_files
 
 def check_variant(original_sql, variant_sql, method=None):
     """Validate variant syntax, non-emptiness, and difference from original."""

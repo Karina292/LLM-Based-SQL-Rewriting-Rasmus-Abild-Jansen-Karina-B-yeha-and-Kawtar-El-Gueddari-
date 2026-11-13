@@ -8,8 +8,8 @@ from sqlglot import exp
 
 
 def verify_structure(sql: str, expected_type: str) -> tuple:
-    """Validate whether the SQL query conforms to the expected structural pattern
-
+    """
+    Validate whether the SQL query conforms to the expected structural pattern
     (join, cte, subquery) while rejecting trivial/empty wrappers.
     """
     try:
@@ -128,8 +128,8 @@ def verify_structure(sql: str, expected_type: str) -> tuple:
 
 
 def verify_equivalence(cursor, original_sql: str, variant_sql: str) -> bool:
-    """Verify semantic multiset (bag) equivalence between two queries on PostgreSQL
-
+    """
+    Verify semantic multiset (bag) equivalence between two queries on PostgreSQL
     using symmetric multiset difference (EXCEPT ALL).
     """
     original = original_sql.strip().rstrip(";").strip()
