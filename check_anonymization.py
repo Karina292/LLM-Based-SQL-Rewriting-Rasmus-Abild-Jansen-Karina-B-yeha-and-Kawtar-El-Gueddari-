@@ -1,6 +1,6 @@
 """Anonymization Verification Script (Same layout and reporting style as
-
 transformations.py).
+Author: Karina B'yeha
 """
 
 from pathlib import Path

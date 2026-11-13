@@ -1,4 +1,6 @@
-"""SQL Structure and Semantic Equivalence Verification Module.
+"""
+SQL Structure and Semantic Equivalence Verification Module.
+Author: Karina B'yeha
 """
 
 import sqlglot

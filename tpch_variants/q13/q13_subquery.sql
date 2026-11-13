@@ -1,0 +1,22 @@
+SELECT
+  c_count,
+  COUNT(*) AS custdist
+FROM (
+  SELECT
+    *
+  FROM (
+    SELECT
+      c_custkey,
+      COUNT(o_orderkey)
+    FROM customer
+    LEFT OUTER JOIN orders
+      ON c_custkey = o_custkey AND o_comment NOT LIKE '%special%deposits%'
+    GROUP BY
+      c_custkey
+  ) AS c_orders(c_custkey, c_count)
+) AS sub_data
+GROUP BY
+  c_count
+ORDER BY
+  custdist DESC,
+  c_count DESC;
