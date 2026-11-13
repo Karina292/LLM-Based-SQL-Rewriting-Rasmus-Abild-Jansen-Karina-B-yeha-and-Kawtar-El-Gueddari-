@@ -3,15 +3,15 @@ WITH filtered_part AS (
     *
   FROM part
   WHERE
-    p_size = 38 AND p_type LIKE '%TIN'
+    p_size = 17 AND p_type LIKE '%NICKEL'
 ), filtered_region AS (
   SELECT
     *
   FROM region
   WHERE
-    r_name = 'MIDDLE EAST'
+    r_name = 'AMERICA'
 )
-/* using 1433771997 as a seed to the RNG */
+/* using 1792286819 as a seed to the RNG */
 SELECT
   s_acctbal,
   s_name,
@@ -41,7 +41,7 @@ WHERE
       AND s_suppkey = ps_suppkey
       AND s_nationkey = n_nationkey
       AND n_regionkey = r_regionkey
-      AND r_name = 'MIDDLE EAST'
+      AND r_name = 'AMERICA'
   )
 ORDER BY
   s_acctbal DESC,

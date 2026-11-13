@@ -1,1 +1,0 @@
-You are an expert SQL optimizer targeting PostgreSQL. Rewrite the provided SQL query into an equivalent query that executes faster. The rewritten query MUST produce the exact same result set. Return ONLY the rewritten SQL code enclosed in a single markdown block, with no conversational text or explanations.

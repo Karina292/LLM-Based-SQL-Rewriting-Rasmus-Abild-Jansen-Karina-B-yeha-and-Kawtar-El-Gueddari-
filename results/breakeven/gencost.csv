@@ -1,3 +1,0 @@
-model,n_gen,t_gen_med_s,t_gen_q1_s,t_gen_q3_s,tokens_med,n_fast_tpch_sf01_anon,k_med_tpch_sf01_anon,k_min_tpch_sf01_anon,n_fast_tpch_sf01_idx,k_med_tpch_sf01_idx,k_min_tpch_sf01_idx,n_fast_tpch_sf1_anon,k_med_tpch_sf1_anon,k_min_tpch_sf1_anon
-llama3.1,225,6.559,5.198,8.196,235.000,8,916.501,119.685,8,1022.193,101.726,9,88.147,35.057
-qwen2.5-coder,225,5.584,4.608,7.452,211.000,7,1308.345,0.279,10,1396.260,866.914,9,36.432,32.084

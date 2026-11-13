@@ -1,6 +1,5 @@
 """TPC-H Query and Schema Anonymization Module.
-
-Author: Karina Part of INF2204 - Assignment 3 / Experiment Pipeline
+Author: Karina
 """
 import re
 from pathlib import Path
