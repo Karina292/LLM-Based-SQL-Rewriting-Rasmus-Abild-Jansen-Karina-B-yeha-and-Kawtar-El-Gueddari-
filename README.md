@@ -125,7 +125,34 @@ This script checks all 45 anonymized query variants and verifies that:
 
 The script also checks that `schema_anon.sql` exists.
 
-## 3. Experimental Results Analysis
+## 3. Measurement (correctness and timing)
+
+Databases: see `setup/README_databases.md` (TPC-H data, anonymized schema, indexes, server settings).
+
+1. Check the pipeline on known cases (uses the original TPC-H names):
+   ```sh
+   python measure/cli.py selftest --db tpch_sf01     # must end with "SELF-TEST PASSED"
+   ```
+2. Save the server configuration:
+   ```sh
+   python measure/cli.py env --db tpch_sf01_anon
+   ```
+3. Check and time every rewrite against its input query (paired protocol: input and rewrite alternated,
+   fresh connection per rewrite, no prepared statements). Always use the queries in `results/queries_used/`:
+   ```sh
+   python measure/paired.py --db tpch_sf01_anon --queries results/queries_used \
+       --generations results/generations.jsonl --out results
+   ```
+   Repeat with `--db tpch_sf01_idx` and `--db tpch_sf1_anon` (SF 1: Q17 and Q20 excluded, `--timeout-s 120`).
+   For Q17 and Q20 at SF 0.1, use `--reps 5 --timeout-s 180` (in our runs, Q17 and Q20 were placed in a
+   separate folder and run with these options). The run can be interrupted and restarted: rewrites already
+   measured are skipped.
+4. Diagnostics of the timing protocol: `python analysis/diag_timing.py --db tpch_sf1_anon`.
+
+Output: `results/measurements.csv` (one row per rewrite and database: verdict, medians, speedup,
+plan signature, raw times), `results/baselines.csv`, and the JSON plans in `results/plans/`.
+
+## 4. Experimental Results Analysis
 
 The script `analysis.py` processes the existing experimental measurements stored in `results/measurements.csv`.
 
@@ -144,7 +171,7 @@ It generates the paper figures and summary tables in `figures/`, including:
 
 This step analyses the existing measurements and does not generate new LLM rewrites, rerun the experiments or repeat the database performance measurements.
 
-## 4. Reproducibility Notes
+## 5. Reproducibility Notes
 
 The original query files used in the experiments are preserved in `results/queries_used/`. These files must not be replaced with newly generated queries, since different random seeds can produce different query inputs.
 
