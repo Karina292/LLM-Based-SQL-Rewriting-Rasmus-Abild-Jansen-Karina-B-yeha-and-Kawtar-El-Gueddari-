@@ -12,7 +12,7 @@ The experiments use 15 selected TPC-H queries, each represented in three structu
 
 Two language models, Qwen2.5-Coder 7B and Llama 3.1 8B, are evaluated on their ability to rewrite these queries.
 
-This README describes the query preparation, structural transformation, anonymization and verification workflow, as well as the analysis of the experimental results.
+This README describes the query preparation, structural transformation, anonymization and verification workflow, the LLM generation and pilots, the measurements, and the analysis of the experimental results, including the break-even k*.
 
 ## 2. Query Preparation and Processing
 
@@ -125,7 +125,29 @@ This script checks all 45 anonymized query variants and verifies that:
 
 The script also checks that `schema_anon.sql` exists.
 
-## 3. Measurement (correctness and timing)
+## 3. LLM Generation
+
+Runs locally with Ollama. Models, temperature, seeds and prompt files are fixed in `setup/generation_config.json`.
+
+```bash
+python generate/generate.py --dry-run --queries q03   # print one prompt, call nothing
+python generate/generate.py --queries q03 q05         # generate selected queries
+python generate/generate.py                           # generate everything not yet logged
+python generate/generate.py --verify 20               # check that 20 rewrites reproduce
+```
+
+Output: `results/generations.jsonl`. Restarting skips rewrites already logged.
+
+### 3.1. Pilots
+
+Scripts in `pilots/`, results and write-ups in `results/pilots/`.
+
+```bash
+python pilots/pilot_temperature.py {data,db,queries,generate,check}   # temperature pilot
+python pilots/pilot_memorization.py {prompts,recognize}               # TPC-H recognition pilot
+```
+
+## 4. Measurement (correctness and timing)
 
 Databases: see `setup/README_databases.md` (TPC-H data, anonymized schema, indexes, server settings).
 
@@ -152,7 +174,7 @@ Databases: see `setup/README_databases.md` (TPC-H data, anonymized schema, index
 Output: `results/measurements.csv` (one row per rewrite and database: verdict, medians, speedup,
 plan signature, raw times), `results/baselines.csv`, and the JSON plans in `results/plans/`.
 
-## 4. Experimental Results Analysis
+## 5. Experimental Results Analysis
 
 The script `analysis.py` processes the existing experimental measurements stored in `results/measurements.csv`.
 
@@ -171,7 +193,18 @@ It generates the paper figures and summary tables in `figures/`, including:
 
 This step analyses the existing measurements and does not generate new LLM rewrites, rerun the experiments or repeat the database performance measurements.
 
-## 5. Reproducibility Notes
+### 5.1. Break-even k*
+
+Number of executions before a rewrite pays back its generation time, k* = T_gen / (T_base - T_rewrite).
+
+```bash
+python breakeven/breakeven.py --measurements results/measurements.csv \
+    --generations results/generations.jsonl --out results/breakeven
+```
+
+Output in `results/breakeven/`, including the LaTeX table `gencost_table.tex`.
+
+## 6. Reproducibility Notes
 
 The original query files used in the experiments are preserved in `results/queries_used/`. These files must not be replaced with newly generated queries, since different random seeds can produce different query inputs.
 
