@@ -5,3 +5,4 @@ check/
 __pycache__/
 pilot_data/
 db_config.py
+.idea/
