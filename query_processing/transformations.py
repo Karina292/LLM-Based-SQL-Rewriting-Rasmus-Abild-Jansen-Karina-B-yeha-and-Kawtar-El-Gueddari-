@@ -10,7 +10,6 @@ Author: Karina B'yeha
 
 import csv
 from pathlib import Path
-import re
 import traceback
 import psycopg2
 import sqlglot
