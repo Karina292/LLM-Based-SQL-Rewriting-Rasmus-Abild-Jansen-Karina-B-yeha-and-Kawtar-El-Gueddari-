@@ -302,9 +302,9 @@ CREATE TABLE tbl_items (
 # BATCH GENERATION PIPELINE
 # ============================================================
 
-BASE_DIR = Path(__file__).resolve().parent  # Punta esattamente a LLMq
-VARIANTS_DIR = BASE_DIR / "tpch_variants"
-OUTPUT_DIR = BASE_DIR / "queries"
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+VARIANTS_DIR = PROJECT_ROOT / "tpch_variants"
+OUTPUT_DIR = PROJECT_ROOT / "queries"
 
 def generate_all_anonymized_files(
     input_dir=VARIANTS_DIR, output_dir=OUTPUT_DIR

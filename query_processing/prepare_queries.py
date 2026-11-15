@@ -7,7 +7,7 @@ Author: Karina B'yeha
 from pathlib import Path
 import re
 
-PROJECT_DIR = Path(__file__).resolve().parent
+PROJECT_DIR = Path(__file__).resolve().parents[1]
 QUERY_DIR = PROJECT_DIR / "setup" / "tpch_queries"
 
 # 15 selected TPC-H benchmark queries

@@ -14,7 +14,7 @@ import traceback
 import psycopg2
 import sqlglot
 from sqlglot import exp, parse_one
-from verifier import verify_equivalence
+from .verifier import verify_equivalence
 
 # ============================================================
 # DATABASE CONFIGURATION
@@ -22,7 +22,7 @@ from verifier import verify_equivalence
 import os
 
 try:
-    from db_config import DB_CONFIG
+    from config.db_config import DB_CONFIG
 except ImportError:
     DB_CONFIG = {
         "dbname": os.getenv("PGDATABASE", "tpch_sf01_anon"),
@@ -35,9 +35,9 @@ except ImportError:
 # CONFIGURATION
 # ============================================================
 
-BASE_DIR = Path(__file__).resolve().parent
-TPCH_DIR = BASE_DIR / "setup" / "tpch_queries"
-OUTPUT_DIR = BASE_DIR / "tpch_variants"
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+TPCH_DIR = PROJECT_ROOT / "setup" / "tpch_queries"
+OUTPUT_DIR = PROJECT_ROOT / "tpch_variants"
 REPORT_FILE = OUTPUT_DIR / "transformation_report.csv"
 
 SELECTED_QUERIES = [2, 3, 4, 5, 7, 8, 9, 10, 11, 12, 13, 17, 18, 20, 21]

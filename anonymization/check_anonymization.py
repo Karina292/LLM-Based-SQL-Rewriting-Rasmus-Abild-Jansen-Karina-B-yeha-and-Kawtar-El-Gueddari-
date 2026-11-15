@@ -11,8 +11,8 @@ import sqlglot
 # CONFIGURATION & PATHS
 # ============================================================
 
-BASE_DIR = Path(__file__).resolve().parent
-QUERIES_DIR = BASE_DIR / "queries"
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+QUERIES_DIR = PROJECT_ROOT  / "queries"
 
 SELECTED_QUERIES = [2, 3, 4, 5, 7, 8, 9, 10, 11, 12, 13, 17, 18, 20, 21]
 STRUCTURES = ("cte", "join", "nested")
