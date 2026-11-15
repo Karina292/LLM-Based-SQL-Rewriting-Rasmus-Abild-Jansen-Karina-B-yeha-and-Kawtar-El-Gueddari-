@@ -31,7 +31,7 @@ try:
 except ImportError:
     sqlglot = None      # parse_ok is then recorded as None
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parent.parent  # repo root (this file lives in generate/)
 RESULTS = ROOT / "results"
 GENERATIONS_FILE = RESULTS / "generations.jsonl"
 

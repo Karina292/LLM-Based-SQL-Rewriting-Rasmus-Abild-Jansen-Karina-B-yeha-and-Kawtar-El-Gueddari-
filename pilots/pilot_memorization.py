@@ -26,7 +26,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 import sys
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))  # generate.py, run_logger.py live in the repo root
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "generate"))  # generate.py, run_logger.py live in generate/
 import generate as g
 import run_logger as rl
 import pilot_temperature as pt

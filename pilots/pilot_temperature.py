@@ -33,7 +33,7 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))  # generate.py, run_logger.py live in the repo root
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "generate"))  # generate.py, run_logger.py live in generate/
 import generate as g
 import run_logger as rl
 

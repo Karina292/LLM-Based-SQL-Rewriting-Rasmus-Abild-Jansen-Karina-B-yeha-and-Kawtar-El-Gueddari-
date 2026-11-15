@@ -10,7 +10,7 @@ T_base     = baseline_median_ms in measurements.csv (same-session baseline)
 T_rewrite  = median_ms in measurements.csv
 
 Usage:
-    python breakeven.py --measurements results/measurements.csv \
+    python breakeven/breakeven.py --measurements results/measurements.csv \
         --generations results/generations.jsonl --out results/breakeven
 Rerun with the SF 1 measurements file to get SF 1 numbers.
 """

@@ -2,19 +2,18 @@
 generate.py - generation phase: send every input query to the LLMs (run on Rasmus' PC).
 
 Commands:
-  python generate.py --dry-run --queries q03
+  python generate/generate.py --dry-run --queries q03
       Print the exact prompt for one job, call nothing.
-  python generate.py --queries q03 q05
+  python generate/generate.py --queries q03 q05
       Generate all forms x models x seeds of these queries (resumable).
-  python generate.py
+  python generate/generate.py
       Generate everything in queries/ that is not in generations.jsonl yet.
-  python generate.py --verify 20
+  python generate/generate.py --verify 20
       Re-generate 20 random logged rewrites and check that each seed gives
       exactly the same SQL again (reproducibility evidence, nothing is logged
       to generations.jsonl; the result goes to results/verify_<time>.json).
 
-Options: --models (all in the config), --limit N (stop after N generations),
-         --out (results/generations.jsonl), --allow-mismatch
+
 
 Settings come from setup/generation_config.json, the prompt from
 setup/prompt_system.txt (fixed instruction, A2 section 3.3) and
@@ -25,7 +24,6 @@ can measure it.
 Before a run:
   - the Ollama version and model IDs are checked against the config, so the
     weights cannot change during the campaign without us noticing;
-  - the PC must run on mains power (on battery, Windows lowers the clocks);
   - each model gets one untimed warm-up call, so its file is read from disk
     once before logging starts (later reloads come from the OS file cache).
 While running, Windows is asked not to go to sleep (released when the script ends).
