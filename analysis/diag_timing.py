@@ -1,28 +1,13 @@
 """
-diag_timing.py - checks that speedups are not measurement artifacts.
+Checks that the measured speedups are not caused by the way we time queries.
+This is how we found the problem at SF 1 that led to paired.py.
 
-These are the diagnostics that led us to the paired protocol at SF 1
-(measure/paired.py; see the Pilot Experiments section of the paper).
+  python analysis/diag_timing.py --db tpch_sf1_anon [--prepare]
 
-Run from the repository root:
-  python analysis/diag_timing.py                    # checks 1 and 2 on SF 1
-  python analysis/diag_timing.py --prepare          # also check 3
-  python analysis/diag_timing.py --db tpch_sf01_anon
-
-Check 1 - same-plan rewrites
-  A rewrite with exactly the same plan as its input query does the same work,
-  so its speedup should be about 1.0. A median far from 1.0 means the timing,
-  not the rewrite, is biased.
-
-Check 2 - alternating test
-  For the 3 same-plan rewrites with the lowest stored speedup, time the input
-  query and the rewrite in turn (A, B, A, B, ...) on a fresh connection.
-  If they now take the same time, the stored speedup was an artifact.
-
-Check 3 - prepared statements (--prepare)
-  psycopg automatically prepares a query run more than 5 times on the same
-  connection. Time the same pairs with and without this feature to see whether
-  it changes execution times.
+1. Rewrites with the same plan as their input should have a speedup near 1.0.
+2. For the 3 worst of them, time input and rewrite in turn on a new
+   connection: if they now take the same time, the old speedup was wrong.
+3. With --prepare: compare with and without psycopg's prepared statements.
 """
 
 import argparse

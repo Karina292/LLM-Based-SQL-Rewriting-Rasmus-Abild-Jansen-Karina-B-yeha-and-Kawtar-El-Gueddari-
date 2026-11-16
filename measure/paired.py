@@ -1,24 +1,13 @@
 """
-paired.py - measure LLM rewrites with PAIRED timing (used for SF 1).
+Paired timing of the LLM rewrites (used for all the results in the paper).
 
-Why: `cli.py rewrites` times the input query first (baseline) and each rewrite
-later. If the machine or the connection behaves differently in between, the
-speedup is biased. At SF 1 this made same-plan rewrites look ~30% slower
-(see analysis/diag_timing.py and the Pilot Experiments section).
+The input query and the rewrite are run one after the other (input, rewrite,
+input, ...) on a new connection for each rewrite, without prepared statements.
+We do this because timing all baselines first and the rewrites later gave
+biased speedups at SF 1 (see analysis/diag_timing.py).
 
-What changes compared to `cli.py rewrites` (everything else is identical:
-same correctness check, same plan comparison, same results file):
-  1. The input query and the rewrite are timed ALTERNATELY
-     (input, rewrite, input, rewrite, ...), so both see the same conditions.
-  2. Each rewrite gets a NEW connection with psycopg's automatic prepared
-     statements disabled, so both queries are executed in exactly the same way.
-
-In measurements.csv, baseline_median_ms is then the median of the input query's
-interleaved runs, and speedup = baseline_median_ms / median_ms.
-
-Usage (from the repository root):
-  python measure/paired.py --db tpch_sf1_anon --queries check/q_fast \
-         --generations results/generations.jsonl --timeout-s 120
+Example:
+  python measure/paired.py --db tpch_sf01_anon --queries results/queries_used
 """
 
 import argparse

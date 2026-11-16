@@ -1,17 +1,11 @@
 """
-selftest.py - checks that the whole measurement pipeline gives the right verdicts.
+Tests the checker before the real measurements.
 
-We take TPC-H Q4, write it by hand in the three forms (nested / join / cte),
-and build 6 fake "rewrites" whose correct verdict we know in advance.
-The real pipeline (baseline + rewrites) is run on them and each verdict is
-compared with the expected one.
-
-Run it after any change to the code:
+Six hand-written versions of TPC-H Q4 with a known verdict: two equivalent
+ones, a changed filter, a reversed order, broken SQL and two statements.
+Run on the database with the original TPC-H names:
     python measure/cli.py selftest --db tpch_sf01
-It must end with "SELF-TEST PASSED". Files are written to selftest/ (git-ignored).
-
-This also supports a claim in the paper: the correctness checker was
-validated on hand-written equivalent and non-equivalent rewrites.
+It must end with "SELF-TEST PASSED".
 """
 
 import json
@@ -19,15 +13,12 @@ from pathlib import Path
 
 from io_files import read_csv
 
-# Date filter shared by the three forms (written once to avoid typos).
+# Date filter shared by the three forms
 Q4_WHERE = ("o_orderdate >= date '1993-07-01' "
             "and o_orderdate < date '1993-07-01' + interval '3' month")
 
-# TPC-H Q4: number of orders per priority having at least one late line item.
-# The three forms are logically equivalent:
-#   nested: EXISTS subquery (as in the TPC-H specification)
-#   join  : JOIN + count(DISTINCT ...) so an order with several late lines counts once
-#   cte   : distinct late orders computed in a CTE, then joined
+# Using TPC-H Q4: number of orders per priority having at least one late line item
+
 SELFTEST_FORMS = {
     "nested": f"""
 select o_orderpriority, count(*) as order_count
@@ -58,10 +49,10 @@ order by o_orderpriority;
 """,
 }
 
-# Fake rewrites of the nested form, with the verdict the pipeline must give.
+# Fake rewrites of the nested form, with the verdict the pipeline must give
 SELFTEST_REWRITES = [
-    (SELFTEST_FORMS["join"], "correct"),                       # equivalent query
-    (SELFTEST_FORMS["cte"], "correct"),                        # equivalent query
+    (SELFTEST_FORMS["join"], "correct"),
+    (SELFTEST_FORMS["cte"], "correct"),
     (SELFTEST_FORMS["join"].replace("1993-07-01", "1993-10-01"),
      "wrong_result"),                                          # changed date filter
     ("selec o_orderpriority from orders", "syntax_error"),     # invalid SQL

@@ -1,18 +1,13 @@
 """
-io_files.py - reading inputs and writing results.
+Reading the inputs and writing the results.
 
-Inputs:
-  queries/qXX_<form>.sql     input queries, form in {nested, join, cte}  (Karina)
-  results/generations.jsonl  one LLM rewrite per line                    (Rasmus)
-      required keys: query_id, form, model, seed, temperature, sql
+Inputs:  query files named qXX_<form>.sql (the measured ones are in
+         results/queries_used/) and results/generations.jsonl (one rewrite per line).
+Outputs: results/baselines.csv, results/measurements.csv (one row per rewrite)
+         and the full plans in results/plans/.
 
-Outputs:
-  results/baselines.csv      timing of each input query
-  results/measurements.csv   one line per rewrite (correct or not)
-  results/plans/*.json       full EXPLAIN output of every timed query
-
-The column lists below define the CSV format used by the analysis scripts;
-change them only in agreement with the group.
+The column lists below are used by the analysis scripts, so don't change
+them without telling the group.
 """
 
 import csv

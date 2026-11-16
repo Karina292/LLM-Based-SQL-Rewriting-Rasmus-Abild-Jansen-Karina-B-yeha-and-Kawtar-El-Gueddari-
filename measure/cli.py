@@ -1,21 +1,13 @@
 """
-cli.py - entry point of the measurement phase (run on the PostgreSQL machine).
+Measurement commands (run on the PostgreSQL machine).
 
-Commands:
-  python measure/cli.py env       --db tpch_sf01
-      Save the PostgreSQL version and all settings (reproducibility).
-  python measure/cli.py baseline  --db tpch_sf01 --queries queries/
-      Time every input query and check that its three forms are equivalent.
-  python measure/cli.py rewrites  --db tpch_sf01 --queries queries/ --generations results/generations.jsonl
-      Check and time every LLM rewrite not measured yet (can be re-run any time).
-  python measure/cli.py selftest  --db tpch_sf01
-      Validate the pipeline on known cases (see selftest.py).
+  python measure/cli.py selftest --db tpch_sf01        # test the checker
+  python measure/cli.py env      --db tpch_sf01_anon   # save server settings
+  python measure/cli.py baseline --db tpch_sf01_anon --queries results/queries_used
 
-Options: --warmup W (1), --reps R (20), --timeout-s (60), --decimals (4), --out (results)
-
-Pipeline for one rewrite (measure_one):
-  sql_text (single statement?) -> db.run_query (runs?) -> compare (same result?)
-  -> db.time_query (median) -> plans (plan changed?) -> io_files (measurements.csv)
+measure_one() handles one rewrite: single statement? -> runs? -> same result?
+-> timing -> plan changed? -> one row in measurements.csv.
+The reported results were measured with paired.py, which reuses measure_one.
 """
 
 import argparse
@@ -35,7 +27,7 @@ from sql_text import clean_sql, count_statements, has_top_level_order_by
 def cmd_env(args):
     """Save PostgreSQL's version and every setting to results/env_<date>.json.
 
-    Documents the exact environment of the measurements (C5) and avoids
+    Documents the exact environment of the measurements and avoids
     measuring on the wrong server version by mistake.
     """
     conn = connect(args.db, args.timeout_s)
@@ -69,7 +61,7 @@ def ensure_baselines(conn, args, queries, out, wanted=None):
             rows = run_query(conn, sql)
             times, doc = time_query(conn, sql, args.warmup, args.reps)
         except Exception as e:
-            # An input query should never fail: report it and continue.
+            # An input query should never fail, report it and continue
             print(f"FAILED ({classify_error(e)}): {str(e).splitlines()[0]}")
             continue
         sig = plan_signature(doc["Plan"])
@@ -86,9 +78,7 @@ def ensure_baselines(conn, args, queries, out, wanted=None):
 def cmd_baseline(args):
     """Time every input query, then check that the 3 forms of each query agree.
 
-    The second part validates Karina's variants: if a form is reported as
-    DIFFERENT, it is not equivalent and must be fixed before the campaign,
-    otherwise the comparison between forms would be meaningless.
+    The second part validates the queries' variants
     """
     conn = connect(args.db, args.timeout_s)
     queries = load_input_queries(args.queries)
@@ -120,14 +110,6 @@ def cmd_baseline(args):
 def measure_one(conn, args, gen, queries, base, ref_cache, out, timer=None):
     """Evaluate one LLM rewrite and return its row for measurements.csv.
 
-    Steps (stop at the first failure, which is recorded in failure_type):
-      0. text check: empty -> empty_sql, several statements -> multi_statement
-         (never executed, so the database cannot be modified)
-      1. execution: syntax_error / sql_error / timeout
-      2. correctness: same result as the input query? else wrong_result
-      3. timing (correct rewrites only): warm-up + R runs, median
-      4. speedup = baseline median / rewrite median   (> 1 means faster)
-         plan_changed = rewrite plan differs from the input query's plan
     """
     qid, form = str(gen["query_id"]), str(gen["form"])
     row = {"query_id": qid, "form": form, "model": gen["model"], "seed": gen["seed"],
@@ -135,13 +117,13 @@ def measure_one(conn, args, gen, queries, base, ref_cache, out, timer=None):
            "warmup": args.warmup, "reps": args.reps, "measured_at": now(),
            "correct": False, "failure_type": "", "error": ""}
 
-    # Reference result of the input form: computed once, reused for all its rewrites.
+    # Reference result of the input form is computed once, reused for all its rewrites
     if (qid, form) not in ref_cache:
         ref_sql = clean_sql(queries[(qid, form)])
         ref_cache[(qid, form)] = (run_query(conn, ref_sql), has_top_level_order_by(ref_sql))
     ref_rows, ordered = ref_cache[(qid, form)]
 
-    # 0. Text check
+    # Text check
     sql = clean_sql(gen.get("sql", ""))
     n_stmt = count_statements(sql)
     if n_stmt == 0:
@@ -151,7 +133,7 @@ def measure_one(conn, args, gen, queries, base, ref_cache, out, timer=None):
         row["failure_type"] = "multi_statement"
         return row
 
-    # 1. Execution
+    # Execution
     try:
         cand_rows = run_query(conn, sql)
     except Exception as e:
@@ -159,18 +141,16 @@ def measure_one(conn, args, gen, queries, base, ref_cache, out, timer=None):
         row["error"] = str(e).splitlines()[0][:200]
         return row
 
-    # 2. Correctness
+    # Correctness
     row["rows"] = len(cand_rows)
     ok, why = compare_results(ref_rows, cand_rows, ordered, args.decimals)
-    if not ok:
-        # Logged but never timed: comparing the runtime of queries that
-        # compute different results would be meaningless.
+    if not ok: # Logged but not timed
         row["failure_type"] = "wrong_result"
         row["error"] = why
         return row
     row["correct"] = True
 
-    # 3. Timing
+    # Timing
     try:
         times, doc = (timer or time_query)(conn, sql, args.warmup, args.reps)
     except Exception as e:
@@ -184,7 +164,7 @@ def measure_one(conn, args, gen, queries, base, ref_cache, out, timer=None):
     row.update({k: s[k] for k in ("median_ms", "mean_ms", "std_ms", "times_ms")})
     row["plan_hash"] = plan_hash(sig)
 
-    # 4. Speedup and plan change, relative to the input query
+    # Speedup (baseline median / rewrite median) and plan change 
     b = base.get((qid, form))
     if b:
         row["baseline_median_ms"] = b["median_ms"]

@@ -1,14 +1,9 @@
 """
-plans.py - summarizes a query plan to detect whether a rewrite changed it.
+Tells whether a rewrite changed the query plan.
 
-PostgreSQL's optimizer may produce the same plan for two different SQL texts
-(then the rewrite cannot be faster), or a different plan (different join
-algorithm, join order, scans...). Comparing plans by hand for hundreds of
-rewrites is not feasible, so each plan is reduced to a signature and a short
-hash; equal hashes mean the same plan shape.
-
-The full plans are still saved as JSON in results/plans/ (see io_files.py)
-for detailed inspection.
+Each plan is reduced to the list of its operators (node, join type,
+aggregation, table) and a short hash. Same hash = same plan, so the rewrite
+cannot really be faster. The full plans are saved in results/plans/.
 """
 
 import hashlib
@@ -17,7 +12,7 @@ import hashlib
 def plan_signature(plan):
     """Turn a plan tree into one line listing its operators.
 
-    `plan` is the "Plan" object of EXPLAIN (FORMAT JSON). The tree is walked
+    'plan' is the "Plan" object of EXPLAIN (FORMAT JSON). The tree is walked
     from the root to the leaves (pre-order). For each node we keep:
         Node Type      e.g. Hash Join, Seq Scan, Sort
         [Join Type]    e.g. [Inner], [Semi], [Anti]

@@ -1,21 +1,8 @@
 """
-compare.py - decides whether a rewrite is correct.
-
-A rewrite is correct iff it returns exactly the same multiset of rows as the
-input query: same number of rows, and no row missing on either side,
-duplicates included. This is equivalent to
-
-    (A EXCEPT ALL B) is empty  AND  (B EXCEPT ALL A) is empty
-
-If the input query has a top-level ORDER BY (see sql_text.py), the rows must
-also come in the same order.
-
-Values are normalized before comparing, so that two equivalent queries are
-not reported as different because of representation details (rounding,
-3 vs 3.0, char padding).
-
-This module never connects to the database: it compares two lists of rows
-that db.run_query already fetched.
+Decides if a rewrite is correct: it must return the same rows as the input
+query (same count, duplicates included), and in the same order if the input
+has a top-level ORDER BY. Values are normalized first (rounding to 4 decimals,
+3 = 3.0, trailing spaces) so small representation differences don't count.
 """
 
 import math

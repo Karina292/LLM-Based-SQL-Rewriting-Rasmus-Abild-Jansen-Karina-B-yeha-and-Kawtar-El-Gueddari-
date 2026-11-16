@@ -1,20 +1,11 @@
 """
-db.py - everything that talks to PostgreSQL: connection, execution, timing.
+Everything that talks to PostgreSQL: connection, running a query, timing.
 
-Timing protocol (time_query):
-  1. W warm-up executions, not recorded (default W = 1, --warmup)
-  2. R executions with EXPLAIN (ANALYZE, BUFFERS, FORMAT JSON)
-     (default R = 20, --reps); we record PostgreSQL's "Execution Time"
-  3. the median of the R times is used (stats)
-
-Methodological notes:
-  - Warm-up loads the table pages into memory, so that the first (cold)
-    run does not penalize whichever query happens to run first.
-  - Median rather than mean: one run slowed down by the OS does not shift it.
-  - EXPLAIN ANALYZE adds some instrumentation overhead, but in the same way
-    for the input query and the rewrite, so the speedup ratio stays valid.
-  - "Execution Time" excludes the time to send rows to the client and the
-    planning time; we measure the query execution itself.
+Timing (time_query): 1 warm-up run, then R runs with EXPLAIN ANALYZE, and we
+keep the median of PostgreSQL's "Execution Time" (planning and sending rows
+to the client are not included). The median is used because one slow run
+does not change it. EXPLAIN ANALYZE adds a small overhead, but the same for
+the input query and the rewrite, so the speedup is not affected.
 """
 
 import json

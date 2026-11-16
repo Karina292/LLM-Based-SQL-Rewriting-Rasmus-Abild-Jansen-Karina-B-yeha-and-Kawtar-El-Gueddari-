@@ -93,7 +93,7 @@ COLUMN_MAP = {
     "r_comment": "col_r_notes",
 }
 
-# Controlled literal shifts (C12: avoids zero row counts while altering text)
+# Renamed categorical values (regions and market segments); other constants are kept
 LITERAL_REPLACEMENTS = {
     # Regions
     "'MIDDLE EAST'": "'ZONE_CENTRAL'",
@@ -180,7 +180,7 @@ def anonymize_sql(sql: str) -> str:
     # Convert back to PostgreSQL SQL string
     anonymized_sql = ast.sql(dialect="postgres", pretty=True)
 
-    # 6. Apply controlled literal substitutions (C12)
+    # 6. Rename the categorical values
     for orig_lit, shifted_lit in LITERAL_REPLACEMENTS.items():
         anonymized_sql = anonymized_sql.replace(orig_lit, shifted_lit)
 

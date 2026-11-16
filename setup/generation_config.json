@@ -12,6 +12,6 @@
   "shuffle_seed": 2204,
   "prompt_system": "setup/prompt_system.txt",
   "prompt_user": "setup/prompt_user.txt",
-  "schema": "queries/schema_anon.sql",
-  "queries_dir": "queries"
+  "schema": "results/queries_used/schema_anon.sql",
+  "queries_dir": "results/queries_used"
 }

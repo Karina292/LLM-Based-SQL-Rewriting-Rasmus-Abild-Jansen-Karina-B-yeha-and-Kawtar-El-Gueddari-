@@ -1,26 +1,13 @@
 """
-sql_text.py - checks on the SQL *text*, before anything is sent to PostgreSQL.
+Checks on the SQL text before running it.
 
-Role in the pipeline (see measure_one in cli.py):
-  1. sql_text.py  -> is the LLM output a single query we can safely run?
-                     does it have a top-level ORDER BY?
-  2. db.py        -> run it on the database (errors, timeouts)
-  3. compare.py   -> does it return the same result as the input query?
+- count_statements: rejects LLM outputs with several statements
+  (e.g. "CREATE INDEX ...; SELECT ...") so they never change the database.
+- has_top_level_order_by: if the input query has an ORDER BY at the top,
+  the rewrite must return the rows in the same order.
 
-Why this is needed:
-  - The LLM output is untrusted text. If it contains several statements
-    (e.g. "CREATE INDEX ...; SELECT ..."), running it would modify the
-    database and bias every later measurement. Such outputs are rejected
-    as "multi_statement" without being executed.
-  - If the input query has a top-level ORDER BY, row order is part of the
-    result and the rewrite must respect it; otherwise order is ignored.
-
-A naive approach (counting ";" or searching "order by" in the raw text)
-gives false results when these appear inside a string, a comment or
-parentheses, and would wrongly reject correct rewrites. So we first erase
-strings and comments, then track the parenthesis depth.
-
-This module never connects to the database.
+Strings and comments are removed first, and we track parentheses, so that a
+";" or "order by" inside a string, a comment or a subquery is not counted.
 """
 
 import re
